@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: "${PG_CONTAINER_NAME:-postgres}"
+    image: domurb/cw:latest
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL:-example@email.com}"
+      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD:-admin}"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: always
+
+  spark:
+    container_name: spark
+    image: domurb/spark_jdbc:latest
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+      PG_CONTAINER_NAME: "${PG_CONTAINER_NAME:-postgres}"   
+    volumes: 
+      - ../main/SPARK://home/jovyan/work
+    ports:
+      - "8888:8888"
+    restart: always
+
+volumes:
+  postgres:
+  pgadmin:
