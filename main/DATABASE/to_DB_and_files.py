@@ -5,9 +5,11 @@ from psycopg2.extras import execute_values
 from itertools import groupby
 from re import sub
 
+
 sys.path.append(str(Path(__file__).parents[1] / "API"))
 sys.path.append(str(Path(__file__).parents[1] / "SCRAPER"))
 
+from scraper_info import HEADERS
 from scraper_driver import get_solutions
 from api_call import get_user, generate_completed, gen_desc
 from db_pool import db
@@ -26,7 +28,7 @@ def _get_con_cur():
     finally:
         con.commit()
         cur.close()
-        db.putconn(con)
+    db.putconn(con)
 
 
 def _user_to_db(username: str) -> None:
@@ -121,40 +123,44 @@ def _katas_to_db(username: str, page_size=500) -> None:
             )
 
             # Inserting kata solutions into KATA_SOLUTIONS table.
-            cur.execute(
-                """
-            SELECT kata_id, user_id, to_char(completed_at, 'YYYY-MM-DD\"T\"HH24:MI:SS.MSZ'), 
-            ARRAY_AGG(prog_language) FROM kata_solutions 
-            JOIN languages USING(language_id)
-            GROUP BY kata_id, user_id, completed_at"""
-            )
-            print(f"Check for already existing kata solutions by user: {username}")
-            db_kid_uuid_ts_lang = {
-                (*ids[:3], tuple(sorted(ids[3]))) for ids in cur.fetchall()
-            }
+            # We check if user has set cookies, if file does not exist, we cannot retrieve solutions, so we skip this part
+            if HEADERS["cookie"] is not None:
+                cur.execute(
+                    """
+                SELECT kata_id, user_id, to_char(completed_at, 'YYYY-MM-DD\"T\"HH24:MI:SS.MSZ'), 
+                ARRAY_AGG(prog_language) FROM kata_solutions 
+                JOIN languages USING(language_id)
+                GROUP BY kata_id, user_id, completed_at"""
+                )
+                print(f"Check for already existing kata solutions by user: {username}")
+                db_kid_uuid_ts_lang = {
+                    (*ids[:3], tuple(sorted(ids[3]))) for ids in cur.fetchall()
+                }
 
-            api_kid_uuid_ts_lang = {
-                (sol[0], uuid, sol[2], tuple(sorted(sol[3]))) for sol in solved
-            }
+                api_kid_uuid_ts_lang = {
+                    (sol[0], uuid, sol[2], tuple(sorted(sol[3]))) for sol in solved
+                }
 
-            new = api_kid_uuid_ts_lang - db_kid_uuid_ts_lang
-            print("Scraping solutions that are not yet in the DB")
-            solutions = get_solutions((i[0] for i in new))
+                new = api_kid_uuid_ts_lang - db_kid_uuid_ts_lang
+                print("Scraping solutions that are not yet in the DB")
+                solutions = get_solutions((i[0] for i in new))
 
-            # Generator returns solutions in format (kata_id, PROG_LANGUAGE (not ID!), completed_at, *Solutions)
-            gen = (
-                (meta_info[0], lang_sol[0], meta_info[2], lang_sol[1:])
-                for (meta_info, sol) in zip(new, solutions)
-                for lang_sol in sol
-            )
-            print(f"Upserting kata_solutions table for user {username}")
-            execute_values(
-                cur,
-                "INSERT INTO kata_solutions VALUES %s ON CONFLICT DO NOTHING",
-                gen,
-                template=f"(%s, '{uuid}', (SELECT language_id FROM languages WHERE languages.prog_language = %s), %s, %s)",
-                page_size=200,
-            )
+                # Generator returns solutions in format (kata_id, PROG_LANGUAGE (not ID!), completed_at, *Solutions)
+                gen = (
+                    (meta_info[0], lang_sol[0], meta_info[2], lang_sol[1:])
+                    for (meta_info, sol) in zip(new, solutions)
+                    for lang_sol in sol
+                )
+                print(f"Upserting kata_solutions table for user {username}")
+                execute_values(
+                    cur,
+                    "INSERT INTO kata_solutions VALUES %s ON CONFLICT DO NOTHING",
+                    gen,
+                    template=f"(%s, '{uuid}', (SELECT language_id FROM languages WHERE languages.prog_language = %s), %s, %s)",
+                    page_size=200,
+                )
+            else:
+                print("COOKIES NOT SET, SKIPPING SCRAPING OF SOLUTIONS PART")
 
         except (Exception) as error:
             print("Error while commiting PostgreSQL", error)
@@ -164,66 +170,60 @@ def _katas_to_db(username: str, page_size=500) -> None:
 def _make_dirs():
     """Creates directories for the distinct combinations of programing language and ranks"""
     with _get_con_cur() as (con, cur):
-
-        cur.execute(
-            """SELECT DISTINCT prog_language, rank_name FROM kata_solutions 
-                JOIN languages USING(language_id)
-                JOIN katas USING(kata_id)
-                JOIN ranks USING(rank_id)
-                ORDER BY prog_language, rank_name;"""
-        )
-        print("Creating directories...")
-        folder = Path(__file__).parents[3] / "Push_to_github"
-        for lang, ranks in groupby(cur.fetchall(), lambda x: x[0]):
-            Path(folder / lang).mkdir(parents=True, exist_ok=True)
-            for rank in ranks:
-                Path(folder / lang / rank[1].replace(" ", "_")).mkdir(
-                    parents=True, exist_ok=True
-                )
+        # We check if user has set cookies, if file does not exist, we cannot retrieve solutions, so we skip this part
+        if HEADERS["cookie"] is not None:
+            cur.execute(
+                """SELECT DISTINCT prog_language, rank_name FROM kata_solutions 
+                    JOIN languages USING(language_id)
+                    JOIN katas USING(kata_id)
+                    JOIN ranks USING(rank_id)
+                    ORDER BY prog_language, rank_name;"""
+            )
+            print("Creating directories...")
+            folder = Path(__file__).parents[3] / "Push_to_github"
+            for lang, ranks in groupby(cur.fetchall(), lambda x: x[0]):
+                Path(folder / lang).mkdir(parents=True, exist_ok=True)
+                for rank in ranks:
+                    Path(folder / lang / rank[1].replace(" ", "_")).mkdir(
+                        parents=True, exist_ok=True
+                    )
 
 
 def _db_to_files():
     """Fetches solved katas and creates files in the corresponding directories (prog lang -> rank)"""
     with _get_con_cur() as (con, cur):
-
-        cur.itersize = 10000
-        cur.execute(
-            """SELECT prog_language, rank_name, username, kata_name, kata_description, completed_at, solution  FROM kata_solutions 
-                    JOIN languages USING(language_id)
-                    JOIN katas USING(kata_id)
-                    JOIN ranks USING(rank_id)
-                    JOIN users USING(user_id)"""
-        )
-
-        folder = Path(__file__).parents[3] / "Push_to_github"
-        extentions = {"python": "py", "shell": "sh", "sql": "sql"}
-        print("Creating script files for all solutions...")
-        for sol in cur:
-            f_dir = (
-                folder
-                / sol[0]
-                / sol[1].replace(" ", "_")
-                / "{}--by_{}--.{}".format(
-                    sub("[^a-zA-Z0-9 \.]", "", sol[3]).replace(" ", "_"),
-                    sol[2],
-                    extentions.get(sol[0], "txt"),
-                )
+        # We check if user has set cookies, if file does not exist, we cannot retrieve solutions, so we skip this part
+        if HEADERS["cookie"] is not None:
+            cur.itersize = 10000
+            cur.execute(
+                """SELECT prog_language, rank_name, username, kata_name, kata_description, completed_at, solution  FROM kata_solutions 
+                        JOIN languages USING(language_id)
+                        JOIN katas USING(kata_id)
+                        JOIN ranks USING(rank_id)
+                        JOIN users USING(user_id)"""
             )
-            if not f_dir.is_file():
-                with open(f_dir, "w", encoding="utf-8") as f:
-                    f.write("#" + str(sol[5]) + "\n")
-                    f.write('"""' + sol[4] + '"""' + "\n\n")
-                    solut = sol[-1]
-                    if not solut[0] == "(":
-                        f.write(solut)
-                    else:
-                        f.write("\n\n".join(solut[2:-2].split('","')))
+
+            folder = Path(__file__).parents[3] / "Push_to_github"
+            extentions = {"python": "py", "shell": "sh", "sql": "sql"}
+            print("Creating script files for all solutions...")
+            for sol in cur:
+                f_dir = (
+                    folder
+                    / sol[0]
+                    / sol[1].replace(" ", "_")
+                    / "{}--by_{}--.{}".format(
+                        sub("[^a-zA-Z0-9 \.]", "", sol[3]).replace(" ", "_"),
+                        sol[2],
+                        extentions.get(sol[0], "txt"),
+                    )
+                )
+                if not f_dir.is_file():
+                    with open(f_dir, "w", encoding="utf-8") as f:
+                        f.write("#" + str(sol[5]) + "\n")
+                        f.write('"""' + sol[4] + '"""' + "\n\n")
+                        solut = sol[-1]
+                        if not solut[0] == "(":
+                            f.write(solut)
+                        else:
+                            f.write("\n\n".join(solut[2:-2].split('","')))
     print("Operation completed!")
-
-
-if __name__ == "__main__":
-    # _user_to_db("Kolhelma")
-    # _katas_to_db("Kolhelma")
-    # _make_dirs()
-    # _db_to_py()
-    pass

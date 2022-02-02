@@ -1,6 +1,7 @@
 # Codewars coding exercise solutions pipeline
 
 ###### Makes asynchronous API requests, scrapes the Codewars website for solutions, stores data into Postgres database, creates directories, stores files with those solutions and analyses data with Spark.
+###### Requests are only made to entires non-existent in the DB, so subsequent runs of the program are FAST!
 
 # Prerequisites
 [Docker](https://docs.docker.com/get-docker/)  
@@ -14,6 +15,7 @@
   ```
 
 2. Set user Cookie values in order to scrape users solutions  
+- IF FILE DOES NOT EXIST, SOLUTION SCRAPING PART IS SKIPPED TO SAVE TIME!
 - ./main/SCRAPER should have a ".env" file with cookie and header values  
 COOKIE=value  
 TOKEN=value  

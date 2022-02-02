@@ -14,6 +14,3 @@ def get_uri():
         "5432",
         os.getenv("POSTGRES_USER", "postgres"),
     )
-
-
-print(get_uri())
