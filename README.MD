@@ -3,10 +3,8 @@
 ###### Makes asynchronous API requests, scrapes the Codewars website for solutions, stores data into Postgres database, creates directories, stores files with those solutions and analyses data with Spark.
 
 # Prerequisites
-[Docker](https://docs.docker.com/get-docker/)
-
-[Python 3.9+](https://www.python.org/)
-
+[Docker](https://docs.docker.com/get-docker/)  
+[Python 3.9+](https://www.python.org/)  
 [Docker-compose](https://docs.docker.com/compose/install/)
 
 # Runing project (in the project directory)
@@ -37,22 +35,18 @@
 - Default password
     admin
 ###### Postgres Server info
-- Default host name (Docker container name)
-    postgres
-- Default port:
-    5432
-- Default server name (value of the "POSTGRES_USER" variable)
-    postgres
-- Default username
-    postgres
-- Defaul password
-    postgres
+- Default host name (Docker container name): postgres
+- Default port: 5432
+- Default server name (value of the "POSTGRES_USER" variable): postgres
+- Default username: postgres
+- Defaul password: postgres
 ###### Jupyter notebook for Spark
-- URL
+- URL  
     http://localhost:8888/notebooks
-If prompted for a token, it will appear in the terminal where you ran docker-compose. 
-e.g. http://127.0.0.1:8888/lab?token=**bf3a23263e3ff416c2aaf99d4b8e51d49bc97c5d9239173b**
-Mount bind at ../main/SPARK://home/jovyan/work
+- If prompted for a token, it will appear in the terminal where you ran docker-compose.  
+e.g. http://127.0.0.1:8888/lab?token=bf3a23263e3ff416c2aaf99d4b8e51d49bc97c5d9239173b
+- Mount bind at 
+../main/SPARK://home/jovyan/work
    
 ## Variables can be changed with a ".env" file in the same docker directory
 - Example of the ".env" file:
@@ -61,42 +55,3 @@ Mount bind at ../main/SPARK://home/jovyan/work
     PGADMIN_DEFAULT_EMAIL=value_you_choose
     PGADMIN_DEFAULT_PASSWORD=value_you_choose
     PG_CONTAINER_NAME=value_you_choose
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---- PgAdmin4 info (used in dcDEV.yaml compose file) ---
-email: PGADMIN_DEFAULT_EMAIL (Default - example@email.com)
-password: PGADMIN_DEFAULT_PASSWORD (Default - admin)
-
---- Postgres Server info ---
-Server name: POSTGRES_USER (Default - value of the "POSTGRES_USER" variable) 
-Host name: postgres (It's the name of the Container)
-Port: 5432
-Username: POSTGRES_USER (Default - postgres)
-Password: POSTGRES_PASSWORD (Default - postgres)
-
---- START ---
-docker compose up -f dcPROD.yaml
-Run: TODO
-
---- SHUTDOWN ---
-docker compose down -f dcPROD.yaml
-Delete volumes [Optional]: docker vomule prune
-Delete containers [Optional]: docker container prune
-
-
---- Spark ---
-http://localhost:8888/notebooks
-If prompted for a token, it should appear in the terminal where you ran docker-compose. 
-(e.g. http://127.0.0.1:8888/lab?token=bf3a23263e3ff416c2aaf99d4b8e51d49bc97c5d9239173b)
