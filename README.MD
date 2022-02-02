@@ -44,6 +44,10 @@ AUTH=value
   docker volume prune
   ```
 
+- Shutdown Windows Subsystem for Linux (optional)
+  ```sh 
+  wsl --shutdown
+  ```
 # Links to services
 ###### pgAdmin
     http://localhost:5050/
