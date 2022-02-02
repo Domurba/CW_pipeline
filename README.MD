@@ -8,32 +8,54 @@
 [Docker-compose](https://docs.docker.com/compose/install/)  
 
 # Runing project (in the project directory)
-- Build project infrastructure (Postgres, pgAdmin, Spark)  
-    docker-compose -f ./docker/Docker-compose.yaml up  
-- Set user Cookie values in order to scrape users solutions  
-./main/SCRAPER should have a ".env" file with values, which can be retrieved from  
-Browser > inspect element > network.  
+1. Build project infrastructure (Postgres, pgAdmin, Spark)
+  ```sh
+  docker-compose -f ./docker/Docker-compose.yaml up
+  ```
+
+2. Set user Cookie values in order to scrape users solutions  
+- ./main/SCRAPER should have a ".env" file with cookie and header values  
 COOKIE=value  
 TOKEN=value  
 AUTH=value  
 
-- Install requirements. In your shell type:  
-    pip install -r requirements.txt
-- Run main.py with your username as the argument!
-- Analyse data stored in Postgres using Spark through  
-    http://localhost:8888/notebooks
-- Stop project infrastructure  
-    docker-compose -f ./docker/Docker-compose.yaml down
-- Remove volumes (Optional)  
-    docker volume prune
+3. Install requirements. In your shell type
+  ```sh
+  pip install -r requirements.txt
+  ```
+
+4. Run main.py with your username as the argument!
+  ```sh
+  py main/main.py
+  ```
+
+5. Analyse data stored in Postgres using Spark through
+  ```sh
+  http://localhost:8888/notebooks
+  ```
+
+6. Stop project infrastructure
+  ```sh
+  docker-compose -f ./docker/Docker-compose.yaml down
+  ```
+
+- Remove volumes (Optional)
+  ```sh 
+  docker volume prune
+  ```
 
 # Links to services
 ###### pgAdmin
     http://localhost:5050/
-- Default email  
-example@email.com
-- Default password  
-admin
+- Default email
+  ```sh
+  example@email.com
+ ```
+- Default password
+  ```
+  admin
+  ```
+
 ###### Postgres Server info
 - Default host name (Docker container name): postgres
 - Default port: 5432
