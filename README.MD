@@ -50,7 +50,7 @@ AUTH=value
 - Default email
   ```sh
   example@email.com
- ```
+   ```
 
 - Default password
   ```sh
