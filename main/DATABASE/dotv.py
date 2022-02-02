@@ -8,9 +8,12 @@ def get_uri():
     direc = Path(__file__).resolve().parents[2] / "docker" / ".env"
     load_dotenv(direc)
     return "postgresql://{}:{}@{}:{}/{}".format(
-        os.getenv("POSTGRES_USER"),
-        os.getenv("POSTGRES_PASSWORD"),
+        os.getenv("POSTGRES_USER", "postgres"),
+        os.getenv("POSTGRES_PASSWORD", "postgres"),
         "localhost",
         "5432",
-        os.getenv("POSTGRES_USER"),
+        os.getenv("POSTGRES_USER", "postgres"),
     )
+
+
+print(get_uri())
