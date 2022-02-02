@@ -1,21 +1,25 @@
 # Codewars coding exercise solutions pipeline
 
-## Data Engineering Project
-###### Makes asynchronous API requests, scrapes the Codewars website for solutions,
-###### stores data into Postgres database, creates directories, stores files with those solutions and analyses data with Spark.
+###### Makes asynchronous API requests, scrapes the Codewars website for solutions, stores data into Postgres database, creates directories, stores files with those solutions and analyses data with Spark.
 
 # Prerequisites
 [Docker](https://docs.docker.com/get-docker/)
+
 [Python 3.9+](https://www.python.org/)
+
 [Docker-compose](https://docs.docker.com/compose/install/)
 
 # Runing project (in the project directory)
 - Build project infrastructure (Postgres, pgAdmin, Spark)
     docker-compose -f ./docker/Docker-compose.yaml up
 - Set user Cookie values in order to scrape users solutions
-./main/SCRAPER should have a ".env" file with the values COOKIE=value, TOKEN=value, AUTH=value 
-(values can be retrieved from Browser > inspect element > network)
+./main/SCRAPER should have a ".env" file with values, which can be retrieved from Browser > inspect element > network.
+- COOKIE=value
+- TOKEN=value
+- AUTH=value 
+
 - Install requirements. In your shell type:
+
     pip install -r requirements.txt
 - Run main.py with your username as the argument!
 - Analyse data stored in Postgres using Spark through
