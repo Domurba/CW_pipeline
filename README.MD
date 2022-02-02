@@ -51,8 +51,9 @@ AUTH=value
   ```sh
   example@email.com
  ```
+
 - Default password
-  ```
+  ```sh
   admin
   ```
 
