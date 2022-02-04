@@ -147,3 +147,4 @@ cython_debug/
 .vscode/
 test/__pycache__/
 TODO.txt
+/logs/**

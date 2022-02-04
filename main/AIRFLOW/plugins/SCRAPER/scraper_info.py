@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-load_dotenv(Path(__file__).parents[1] /  'AIRFLOW' / 'plugins' / '.env')
+load_dotenv(Path(__file__).parents[1] / '.env')
 
 HEADERS = {
     "authority": "www.codewars.com",

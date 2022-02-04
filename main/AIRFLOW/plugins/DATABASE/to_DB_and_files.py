@@ -9,10 +9,10 @@ from re import sub
 sys.path.append(str(Path(__file__).parents[1] / "API"))
 sys.path.append(str(Path(__file__).parents[1] / "SCRAPER"))
 
-from scraper_info import HEADERS
-from scraper_driver import get_solutions
-from api_call import get_user, generate_completed, gen_desc
-from db_pool import get_pool
+from SCRAPER.scraper_info import HEADERS
+from SCRAPER.scraper_driver import get_solutions
+from API.api_call import get_user, generate_completed, gen_desc
+from DATABASE.db_pool import get_pool
 
 db = get_pool()
 
@@ -24,9 +24,8 @@ def _get_con_cur():
     try:
         yield con, cur
     except (Exception) as error:
-        print("Rollback! Could not get connection from pool: ", error)
+        print("Rollback! ", error)
         con.rollback()
-        raise
     finally:
         con.commit()
         cur.close()
@@ -182,7 +181,8 @@ def _make_dirs():
                     ORDER BY prog_language, rank_name;"""
             )
             print("Creating directories...")
-            folder = Path(__file__).parents[3] / "Push_to_github"
+            folder = (Path(__file__).parents[1] / "Push_to_github")
+            Path(folder).mkdir(parents=True, exist_ok=True)
             for lang, ranks in groupby(cur.fetchall(), lambda x: x[0]):
                 Path(folder / lang).mkdir(parents=True, exist_ok=True)
                 for rank in ranks:
@@ -205,8 +205,7 @@ def _db_to_files():
                         JOIN users USING(user_id)"""
             )
 
-            folder = Path(__file__).parents[3] / "Push_to_github"
-            Path(folder).mkdir(parents=True, exist_ok=True)
+            folder = Path(__file__).parents[1] / "Push_to_github"
             extentions = {"python": "py", "shell": "sh", "sql": "sql"}
             print("Creating script files for all solutions...")
             for sol in cur:

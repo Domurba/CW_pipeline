@@ -1,4 +1,4 @@
-import dotv
+from DATABASE import dotv
 from psycopg2 import pool, DatabaseError
 
 

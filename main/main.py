@@ -3,15 +3,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parents[0] / "DATABASE"))
 
-from DATABASE.to_DB_and_files import _user_to_db, _katas_to_db, _make_dirs, _db_to_files
-
-
-def run_pipeline_in_order(Username):
-    _user_to_db(Username)
-    _katas_to_db(Username)
-    _make_dirs()
-    _db_to_files()
-
+from to_DB_and_files import run_pipeline_in_order
 
 if __name__ == "__main__":
     user = input("Enter username (case sensitive): ") or "Kolhelma"
