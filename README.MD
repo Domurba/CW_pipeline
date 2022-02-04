@@ -8,8 +8,9 @@
 [Python 3.9+](https://www.python.org/)  
 [Docker-compose](https://docs.docker.com/compose/install/)  
 
-# Before starting docker, you can change the environment variables (Optional)
-In "./docker" create a ".env" file with the format:  
+# Before starting, you can change the environment variables (Optional)
+**In "./docker" create a ".env" file with the format:**  
+
 POSTGRES_USER=choosen_value  
 POSTGRES_PASSWORD=choosen_value  
 POSTGRES_CONTAINER_NAME=choosen_value  
@@ -26,24 +27,24 @@ _AIRFLOW_WWW_USER_PASSWORD=choosen_value
   ```
 
 2. Set user Cookie values in order to scrape users solutions  
-- If ".env" file in "./main/AIRFLOW/plugins does not exist, solutions scraping is skipped.
-- ./main/SCRAPER should have a ".env" file with cookie and header values  
-COOKIE=choosen_value  
-TOKEN=choosen_value  
-AUTH=choosen_value  
+- If ".env" file in "./main/AIRFLOW/plugins" does not exist, solutions scraping is skipped  
 
-In addtion, if you changed the default Postgres container values, add them in this file, below cookie values  
+**COOKIE=choosen_value**  
+**TOKEN=choosen_value**  
+**AUTH=choosen_value**  
 
-POSTGRES_USER=choosen_value  
-POSTGRES_PASSWORD=choosen_value  
-POSTGRES_CONTAINER_NAME=choosen_value
+If you changed the default Postgres container variables, paste them below cookie values 
+
+**POSTGRES_USER=choosen_value**  
+**POSTGRES_PASSWORD=choosen_value**  
+**POSTGRES_CONTAINER_NAME=choosen_value**
 
 3. Install requirements
   ```sh
   pip install -r requirements.txt
   ```
 
-4. Run main.py in the parent directory. You will be prompted for a username. Press ENTER for default
+4. Run main.py. Press ENTER for default username.
   ```sh
   py main/main.py
   ```
@@ -54,14 +55,15 @@ POSTGRES_CONTAINER_NAME=choosen_value
   ```
 
 6. For Airflow ETL pipeline configuration, you need to:  
-- Create a ".env" file in "./main/AIRFLOW/dags" and paste YOUR git repo ssh url
+- Create a ".env" file in "./main/AIRFLOW/dags" and paste YOUR git repo ssh url  
+
   ```sh
   GIT_REPO_SHH_URL=git@github.com:USERNAME/REPO.git
   ```
-- Check that you git SSH keys are locted in "~/.ssh" folder.  
-A bind mout will be created with that folder, so Airflow will have permission to push.
+- Check that your git SSH keys are locted in the "~/.ssh" folder  
+**Docker creates a bind mount, so Airflow has permission to push**
 
-7. Start the DAG
+7. Start the DAG from webserver
   ```sh
   http://localhost:8080/
   ```
@@ -117,12 +119,26 @@ http://127.0.0.1:8888/lab?token=bf3a23263e3ff416c2aaf99d4b8e51d49bc97c5d9239173b
 - Spark file Bind Mount  
 ../main/SPARK://home/jovyan/work
    
-## Variables can be changed with a ".env" file in the same docker directory
-- Example of the ".env" file:  
-    POSTGRES_USER=value_you_choose  
-    POSTGRES_PASSWORD=value_you_choose  
-    PGADMIN_DEFAULT_EMAIL=value_you_choose  
-    PGADMIN_DEFAULT_PASSWORD=value_you_choose  
-    PG_CONTAINER_NAME=value_you_choose  
-    _AIRFLOW_WWW_USER_USERNAME=airflow  
-    _AIRFLOW_WWW_USER_PASSWORD=airflow  
+## You can create three ".env" files. It is the users job to make sure that the postgres container variables are consistent!
+1. first one in the "./docker" directory  
+
+POSTGRES_USER=choosen_value  
+POSTGRES_PASSWORD=choosen_value  
+POSTGRES_CONTAINER_NAME=choosen_value  
+PGADMIN_DEFAULT_EMAIL=choosen_value  
+PGADMIN_DEFAULT_PASSWORD=choosen_value  
+_AIRFLOW_WWW_USER_USERNAME=choosen_value  
+_AIRFLOW_WWW_USER_PASSWORD=choosen_value  
+
+2. second one in the "./main/AIRFLOW/plugins" directory
+
+COOKIE=choosen_value  
+TOKEN=choosen_value 
+AUTH=choosen_value
+POSTGRES_USER=choosen_value
+POSTGRES_PASSWORD=choosen_value 
+POSTGRES_CONTAINER_NAME=choosen_value
+
+3. third one in the "./main/AIRFLOW/dags" directory  
+
+GIT_REPO_SHH_URL=git@github.com:USERNAME/REPO.git
