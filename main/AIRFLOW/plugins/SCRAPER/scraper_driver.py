@@ -29,7 +29,7 @@ def _parse(result):
 
 def get_solutions(ids: list) -> list:
     """Returns a generator of kata solutions.
-    IMPORTANT! Header info located in (--SCRAPER > scraper_info.py--) must be set for the user whose solutions are being retrieved.
+    IMPORTANT! Header info located in "./main/AIRFLOW/plugins/.env" must be set for the user whose solutions are being retrieved.
     Each item in the generator is a list and it may contain more than one solution in different languages. In addition, there might be multiple solutions in each language!
     Solutions are of format [('Language1', 'Solution1', Solution2), ('Language2', 'Solution3', Solution4)]"""
     for html_page in asyncio.get_event_loop().run_until_complete(_seshion(ids)):

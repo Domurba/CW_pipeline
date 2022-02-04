@@ -6,7 +6,6 @@ x-airflow-common:
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
-    # AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${_AIRFLOW_WWW_USER_USERNAME:-airflow}:${_AIRFLOW_WWW_USER_PASSWORD:-airflow}@${POSTGRES_CONTAINER_NAME:-postgres}:5432/airflow
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
@@ -207,18 +206,18 @@ services:
       - bash
       - -c
       - airflow
-  # spark:
-  #   container_name: spark
-  #   image: domurb/spark_jdbc:latest
-  #   environment:
-  #     POSTGRES_USER: "${POSTGRES_USER:-postgres}"
-  #     POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
-  #     PG_CONTAINER_NAME: "${PG_CONTAINER_NAME:-postgres}"
-  #   volumes:
-  #     - ../main/SPARK://home/jovyan/work
-  #   ports:
-  #     - "8888:8888"
-  #   restart: always
+  spark:
+    container_name: spark
+    image: domurb/spark_jdbc:latest
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+      PG_CONTAINER_NAME: "${PG_CONTAINER_NAME:-postgres}"
+    volumes:
+      - ../main/SPARK://home/jovyan/work
+    ports:
+      - "8888:8888"
+    restart: always
 
 volumes:
   postgres:
