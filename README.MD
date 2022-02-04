@@ -8,16 +8,8 @@
 [Python 3.9+](https://www.python.org/)  
 [Docker-compose](https://docs.docker.com/compose/install/)  
 
-# Before starting, you can change the environment variables (Optional)
-**In "./docker" create a ".env" file with the format:**  
+# Before starting, you have the option to change the default container values. If you choose to, please read the last section of this README document.
 
-POSTGRES_USER=choosen_value  
-POSTGRES_PASSWORD=choosen_value  
-POSTGRES_CONTAINER_NAME=choosen_value  
-PGADMIN_DEFAULT_EMAIL=choosen_value  
-PGADMIN_DEFAULT_PASSWORD=choosen_value  
-_AIRFLOW_WWW_USER_USERNAME=choosen_value  
-_AIRFLOW_WWW_USER_PASSWORD=choosen_value  
 
 # Runing project (in the project directory)
 1. Build project infrastructure (Postgres, pgAdmin, Spark, Airflow)
@@ -26,18 +18,19 @@ _AIRFLOW_WWW_USER_PASSWORD=choosen_value
   docker-compose -f ./docker/Docker-compose.yaml up
   ```
 
-2. Set user Cookie values in order to scrape users solutions  
-- If ".env" file in "./main/AIRFLOW/plugins" does not exist, solutions scraping is skipped  
+2. Scraping requires cookie values, if none are set, scraping is skipped.
 
-**COOKIE=choosen_value**  
-**TOKEN=choosen_value**  
-**AUTH=choosen_value**  
+Create a ".env" file in the "./main/AIRFLOW/plugins" directory with the format:
 
-If you changed the default Postgres container variables, paste them below cookie values 
+COOKIE=choosen_value  
+TOKEN=choosen_value  
+AUTH=choosen_value  
 
-**POSTGRES_USER=choosen_value**  
-**POSTGRES_PASSWORD=choosen_value**  
-**POSTGRES_CONTAINER_NAME=choosen_value**
+If you changed the default Postgres container variables, paste them below the cookie values 
+
+POSTGRES_USER=choosen_value  
+POSTGRES_PASSWORD=choosen_value  
+POSTGRES_CONTAINER_NAME=choosen_value
 
 3. Install requirements
   ```sh
@@ -55,13 +48,14 @@ If you changed the default Postgres container variables, paste them below cookie
   ```
 
 6. For Airflow ETL pipeline configuration, you need to:  
-- Create a ".env" file in "./main/AIRFLOW/dags" and paste YOUR git repo ssh url  
+- Create a ".env" file in "./main/AIRFLOW/dags" and paste YOUR git repository ssh url  
 
   ```sh
   GIT_REPO_SHH_URL=git@github.com:USERNAME/REPO.git
   ```
-- Check that your git SSH keys are locted in the "~/.ssh" folder  
-**Docker creates a bind mount, so Airflow has permission to push**
+
+7. Check that your git SSH keys are locted in the "~/.ssh" folder  
+- **Docker creates a bind mount, so Airflow has permission to push**
 
 7. Start the DAG from webserver
   ```sh
@@ -84,40 +78,33 @@ If you changed the default Postgres container variables, paste them below cookie
   ```
 # Links to services
 ###### pgAdmin
-    http://localhost:5050/
-- Default email
   ```sh
-  example@email.com
-   ```
-- Default password
-  ```sh
-  admin
+  http://localhost:5050/
   ```
+- Default email: **example@email.com**  
+- Default password: **admin**  
+
 ###### AIRFLOW 
   ```sh
   http://localhost:8080/
   ```
-  Default username
-  ```sh
-  airflow
-  ```
-- Default password
-  ```sh
-  airflow
-  ```
+- Default username: **airflow**
+- Default password: **airflow**
+
 ###### Postgres Server info
-- Default host name (Docker container name): postgres
-- Default port: 5432
-- Default server name (value of the "POSTGRES_USER" variable): postgres
-- Default username: postgres
-- Defaul password: postgres
+- Default host name (Docker container name): **postgres**
+- Default port: **5432**
+- Default server name (value of the "POSTGRES_USER" variable): **postgres**
+- Default username: **postgres**
+- Defaul password: **postgres**
 ###### Jupyter notebook for Spark
-- URL  
-    http://localhost:8888/notebooks
+  ```sh
+  http://localhost:8888/notebooks
+  ```
 - If prompted for a token, it will appear in the terminal where you ran docker-compose, e.g.  
 http://127.0.0.1:8888/lab?token=bf3a23263e3ff416c2aaf99d4b8e51d49bc97c5d9239173b
 - Spark file Bind Mount  
-../main/SPARK://home/jovyan/work
+**../main/SPARK://home/jovyan/work**
    
 ## You can create three ".env" files. It is the users job to make sure that the postgres container variables are consistent!
 1. first one in the "./docker" directory  
