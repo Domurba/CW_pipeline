@@ -25,7 +25,7 @@
 
 **Airflow** starts the ETL process and pushes changes to your Github repository!  
 
-In addition, requests are only made to non-existent entires in the DB, so subsequent runs of the program are much faster!  
+In addition, requests are only made to non-existent entries in the DB, so subsequent runs of the program are much faster!  
 Database tables are upserted with missing values only.
 
 DB ERD
@@ -46,11 +46,11 @@ Airflow runs
 [Docker-compose](https://docs.docker.com/compose/install/)  
 
 ### Optional parameters
-Before runing docker compose, you have the option to change the default container values. If you choose to, please read the last section of this README document.
+Before running docker compose, you have the option to change the default container values. If you choose to, please read the last section of this README document.
 
 
-# Runing the project
-1. In parent dir, build the project infrastructure (Postgres, pgAdmin, Spark, Airflow)
+# Running the project
+1. In parent directory, build the project infrastructure (Postgres, pgAdmin, Spark, Airflow)
   ```sh
   docker-compose -f ./docker/Docker-compose.yaml build
   docker-compose -f ./docker/Docker-compose.yaml up
