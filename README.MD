@@ -1,18 +1,56 @@
 # Codewars coding exercise solutions pipeline
 
-###### Makes asynchronous API requests, scrapes the Codewars website for solutions, stores data into Postgres database, creates directories, stores files with those solutions and analyses data with Spark.
-###### Requests are only made to entires non-existent in the DB, so subsequent runs of the program are FAST!
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#optional-parameters">Optional parameters</a></li>
+      </ul>      
+    </li>
+    <li><a href="#Runing-the-project">Runing the project</a></li>
+    <li><a href="#Docker-services-info">Docker services info</a></li>
+    <li><a href="#env-files">env files</a></li>
+  </ol>
+</details>
 
-# Prerequisites
+<!-- ABOUT THE PROJECT -->
+## About The Project
+**Python** asynchronously calls the API, scrapes the website for solutions, stores the data into a Postgres DB, creates directories and files with kata descriptions and solutions.  
+
+**Spark** connects to the Postgres DB, fetches the data, transforms it and creates charts with the help of **matplotlib**.  
+
+**Airflow** starts the ETL process and pushes changes to your Github repository!  
+
+In addition, requests are only made to non-existent entires in the DB, so subsequent runs of the program are much faster!  
+Database tables are upserted with missing values only.
+
+DB ERD
+
+![ERD 2022-01-28](https://user-images.githubusercontent.com/91464837/152539725-cc57f4b1-0fc1-435f-b979-776b2f05741f.png)
+
+Airflow DAG
+
+![Airflow graph](https://user-images.githubusercontent.com/91464837/152539805-d5d91885-aa65-49a0-9301-0e14d52f6873.png)
+
+Airflow runs
+
+![Airflow ETL](https://user-images.githubusercontent.com/91464837/152539843-f6cc309d-b698-465c-8ef3-169bbf390340.png)
+
+### Prerequisites
 [Docker](https://docs.docker.com/get-docker/)  
 [Python 3.9+](https://www.python.org/)  
 [Docker-compose](https://docs.docker.com/compose/install/)  
 
-## Before starting, you have the option to change the default container values. If you choose to, please read the last section of this README document.
+### Optional parameters
+Before runing docker compose, you have the option to change the default container values. If you choose to, please read the last section of this README document.
 
 
-# Runing project (in the project directory)
-1. Build project infrastructure (Postgres, pgAdmin, Spark, Airflow)
+# Runing the project
+1. In parent dir, build the project infrastructure (Postgres, pgAdmin, Spark, Airflow)
   ```sh
   docker-compose -f ./docker/Docker-compose.yaml build
   docker-compose -f ./docker/Docker-compose.yaml up
@@ -42,14 +80,14 @@ If you changed the default Postgres container variables, paste them below the co
   py main/main.py
   ```
 
-5. Analyse data stored in Postgres using Spark from
+5. Analyse data using Spark
   ```sh
   http://localhost:8888/notebooks
   ```
 
-6. For Airflow ETL pipeline configuration, you need to:  
-- Create a ".env" file in "./main/AIRFLOW/dags" and paste YOUR git repository ssh url  
+6. Airflow pipeline requires YOUR git repository SSH URL  
 
+create a ".env" file in the "./main/AIRFLOW/dags" directory
   ```sh
   GIT_REPO_SHH_URL=git@github.com:USERNAME/REPO.git
   ```
@@ -76,7 +114,7 @@ If you changed the default Postgres container variables, paste them below the co
   ```sh 
   wsl --shutdown
   ```
-# Links to services
+## Docker services info
 ###### Postgres Server info
 - Default host name (Docker container name): **postgres**
 - Default port: **5432**
@@ -106,7 +144,8 @@ If you changed the default Postgres container variables, paste them below the co
 http://127.0.0.1:8888/lab?token=bf3a23263e3ff416c2aaf99d4b8e51d49bc97c5d9239173b
 - Spark file Bind Mount at: **../main/SPARK://home/jovyan/work**
    
-## You can create three ".env" files. It is the users job to make sure that the postgres container variables are consistent!
+## env files
+###### You can create three ".env" files. It is the users job to make sure that the postgres container variables are consistent!
 1. The first one in the "./docker" dir.
 
   POSTGRES_USER=choosen_value  
