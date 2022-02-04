@@ -7,5 +7,5 @@ RUN apt-get update && apt-get install -y git
 USER airflow
 RUN mkdir /home/airflow/.ssh
 RUN git config --global core.autocrlf true
-RUN git config --global user.name "Dominykas Urbanavicius" 
-RUN git config --global user.email dominykas.urbanavicius@gmail.com
+RUN git config --global user.name "DU" 
+RUN git config --global user.email DU@gmail.com
