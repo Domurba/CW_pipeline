@@ -159,11 +159,11 @@ http://127.0.0.1:8888/lab?token=bf3a23263e3ff416c2aaf99d4b8e51d49bc97c5d9239173b
 2. The second one in the "./main/AIRFLOW/plugins" dir.
 
   COOKIE=choosen_value  
-  TOKEN=choosen_value 
-  AUTH=choosen_value
-  POSTGRES_USER=choosen_value
-  POSTGRES_PASSWORD=choosen_value 
-  POSTGRES_CONTAINER_NAME=choosen_value
+  TOKEN=choosen_value  
+  AUTH=choosen_value  
+  POSTGRES_USER=choosen_value  
+  POSTGRES_PASSWORD=choosen_value  
+  POSTGRES_CONTAINER_NAME=choosen_value  
 
 3. The third one in the "./main/AIRFLOW/dags" dir. 
 
