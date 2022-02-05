@@ -7,10 +7,9 @@ def get_uri():
     """Returns DB conn info URI from .env file, which is used in by docker"""
     direc = Path(__file__).resolve().parents[2] / "docker" / ".env"
     load_dotenv(direc)
-    return "postgresql://{}:{}@{}:{}/{}".format(
+    return "postgresql://{}:{}@{}:{}/postgres".format(
         os.getenv("POSTGRES_USER", "postgres"),
         os.getenv("POSTGRES_PASSWORD", "postgres"),
         "localhost",
-        "5432",
-        os.getenv("POSTGRES_USER", "postgres"),
+        "5432"
     )
