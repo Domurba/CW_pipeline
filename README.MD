@@ -19,11 +19,13 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-**Python** asynchronously calls the API, scrapes the website for solutions, stores the data into a Postgres DB, creates directories and files with kata descriptions and solutions.  
+**Docker** starts the containers with predefined parameters. The *Postgres* image includes extentions, databases used by the Airflow container and the pipeline and a predefined schema. The *Airflow* image includes an instalation of git, while the *Spark* container includes a postgres DB driver.
+
+**Python** asynchronously calls the API, scrapes the website for solutions, stores the data into a *Postgres DB*, creates directories and files with kata descriptions and solutions.  
 
 **Spark** connects to the Postgres DB, fetches the data, transforms it and creates charts with the help of **matplotlib**.  
 
-**Airflow** starts the ETL process and pushes changes to your Github repository!  
+**Airflow** starts the ETL process and pushes changes to your *Github* repository!  
 
 In addition, requests are only made to non-existent entries in the DB, so subsequent runs of the program are much faster!  
 Database tables are upserted with missing values only.
